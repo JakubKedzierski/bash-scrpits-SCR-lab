@@ -1,7 +1,8 @@
 #!/bin/bash
+#Wywolanie np. ./trzeci.sh tarowany.tar 10 *.c
 
-name=$1
+named=$1
 N=$2
 mask=$3
 
-find . -type f -name $mask
+tar -cjf $named `find . -type f -name "$mask" -mtime -$N ` 
