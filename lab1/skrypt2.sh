@@ -31,3 +31,9 @@ cd ..
 fi
 
 find . -name "$3" -type f
+
+#do 11: sudo find /etc -type f \( -mtime +5 -a -mtime -40 -a -size -250k \) -o \( -mtime -5 -a -size -3k \)
+#do 12: rozpakowanie tar -xf pakowanie tar - cjf // jak sie poda pelna sciezke to z folderami pakuje, gdy bez sciezki pakuje same pliki
+# -C pokazuje katalog docelowy na rozpakowanie
+
+
