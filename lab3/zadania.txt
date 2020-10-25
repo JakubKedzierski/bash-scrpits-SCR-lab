@@ -1,0 +1,58 @@
+1.
+ps -ejH - wyswietla wszystkie procesy w drzewku (czyli rodzice dzieci)
+
+linux.pl -> Domyślnie ps wyświetla procesy mające ten sam efektywny identyfikator
+użytkownika (EUID), co bieżący użytkownik, oraz podłączone do tego samego
+terminala, do którego podłączona jest osoba uruchamiająca ps.
+
+-f -> dodaje wiecej informacji, wypisuje komendy polecen 
+-l -> dodaje informacje o watkach
+
+PID- proces ID
+S - stan procesu :
+               D    Nieprzerywalnie uśpiony (zazwyczaj wejście/wyjście)
+               R    Wykonywany lub możliwy do wykonania (w kolejce do wykonania)
+               S    Przerywalnie uśpiony (czekający na zakończenie zdarzenia)
+               T    Zatrzymany przez sygnał kontroli zadań
+               t    Zatrzymany przez program debugujący podczas śledzenia
+               W    Stronicowany (niepoprawne od wersji jądra 2.6.xx)
+               X    Zmarły (nigdy nie powinno wystąpić)
+               Z    Proces niefunkcjonujący ("zombie"), zakończony, ale nieusunięty przez rodzica
+i dodatkowo w innym formacie:
+               <    O wysokim priorytecie (niemiły dla innych użytkowników)
+               N    O niskim priorytecie (miły dla innych użytkowników)
+               L    Mający zablokowane strony w pamięci (dla czasu rzeczywistego lub IO)
+               s    Będący liderem sesji
+               l    Wielowątkowy (używając CLONE_THREAD, jak to robi NPTL pthreads)
+               +    Będący w pierwszoplanowej grupie procesów
+
+F - flagi procesu:
+    1    sforkowany, ale nie wykonał exec.
+    4    używał uprawnień superużytkownika.
+
+tty          Numer urządzenia terminala kontrolującego
+cmd          Sama nazwa programu wykonywalnego
+
+ WCHAN     Nazwa funkcji jądra, w której proces jest uśpiony, lub "-", jeśli
+                             proces jest wykonywany, lub "*", jeśli proces jest wielowątkowy, a
+                             ps nie wyświetla wątków.
+
+C         Wartość liczbowa procentu użycia procesowa
+
+Time - laczne zuzycie procesora w czasie
+STIME - poczatek procesu
+PRI - priorytet procesu
+NI - liczba nice 
+ADDR - adres w pamieci procesu
+SZ- zuzycie wirtualnej pamieci (jeden duzy obszar pamieci operacyjnej dla procesu gdzie tak naprawde jest podzielone na RAM, dysk itp)
+%cpu współczynnik cputime/realtime
+rss czyli niewyswapowana pamięć, której zadanie używało w kilobajtach
+VSZ    Użycie wirtualnej pamięci dla całego procesu w KiB (1024-bajtowa).
+
+-u userlist
+              Wybór przez podanie efektywnego ID użytkownika (EUID) bądź nazwy. Wybiera procesy,
+              których efektywna nazwa użytkownika lub ID jest w userlist, czyli np -u 1000 - wszystkie co UID=1000
+-t Wybór przez tty. Wybiera procesy podłączone do terminali podanych w liście ttylist, - procesy niepodlaczone do terminala
+-p pidlist Wybór przez PID
+
+267 procesow ps -e |wc- l - 2
