@@ -1,3 +1,3 @@
 #!/bin/bash
+sleep 5
 echo "zadanie7"
-sleep 100

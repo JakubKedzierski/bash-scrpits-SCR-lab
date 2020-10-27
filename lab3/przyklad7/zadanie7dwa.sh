@@ -1,3 +1,3 @@
 #!/bin/bash
-echo "zadanie8"
-sleep 100
+sleep 5
+echo "zadanie7dwa"

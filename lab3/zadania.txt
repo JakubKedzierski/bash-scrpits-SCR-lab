@@ -88,6 +88,7 @@ trap -l -> listing
 7
 Wiekszosc procesow ma nice na 80, niektore 60 (przy liczbie nice -20). Nice mozemy dac tylko wieksze (czyli pogorszyc priorytet)
 renice -n nowa liczba -p proces 
+nice - przy uruchamianiu programow
 
 ./zadanie7.sh & nice -n 20 ./zadanie8.sh - konieczne bylo interperetowanie przez ten sam interpreter - skrypt z wieksza liczba nice uruchamia sie pozniej
 Zauwazylem ze jesli podam w jednej lini 2 razy polecenia nice to nie dziala
