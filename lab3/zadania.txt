@@ -55,4 +55,39 @@ VSZ    Użycie wirtualnej pamięci dla całego procesu w KiB (1024-bajtowa).
 -t Wybór przez tty. Wybiera procesy podłączone do terminali podanych w liście ttylist, - procesy niepodlaczone do terminala
 -p pidlist Wybór przez PID
 
-267 procesow ps -e |wc- l - 2
+267 procesow ps -e |echo $(($(wc -l)-2))
+pgrep - uzyskanie numeru pid 
+sshd - szyfrowane sesje terminalowe - 0, po zalogowaniu na diablo: 5, na panamincie 19
+
+2.
+wystapilo poprawne przejscie do komendy upstart - zamiennik inita
+
+
+3. 
+./do3.sh |cat | calc
+Rodzicem jest terminal dla kolejnych komend w potoku 
+WCHAN - pipe_w
+PPID wspolny
+
+5.
+kuba@ubuntu:~$ kill -s SIGFPE `pgrep zadanie5.sh` 
+kuba@ubuntu:~$ kill -s SIGQUIT `pgrep zadanie5.sh`
+kuba@ubuntu:~$ kill -s SIGKILL `pgrep zadanie5.sh`
+Floating point exception (core dumped)
+Quit (core dumped)
+Killed
+po SIGINT smierc bez informacji
+po SIGSTOP i SIGCONT stop, kontynuacja
+
+po przejeciu przez trap sygnaly nie powoduja zmiany dzialania programu oprocz:
+SIGKILL - zabija dalej proces, SIGSTOP i SIGCONT - dzialaja pomimo przechwytywania
+Taki wynik dzialania moze wynikac z przyjetego interpretera - bash
+
+trap -l -> listing
+
+7
+Wiekszosc procesow ma nice na 80, niektore 60 (przy liczbie nice -20). Nice mozemy dac tylko wieksze (czyli pogorszyc priorytet)
+renice -n nowa liczba -p proces 
+
+./zadanie7.sh & nice -n 20 ./zadanie8.sh - konieczne bylo interperetowanie przez ten sam interpreter - skrypt z wieksza liczba nice uruchamia sie pozniej
+Zauwazylem ze jesli podam w jednej lini 2 razy polecenia nice to nie dziala
