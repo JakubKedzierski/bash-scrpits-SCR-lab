@@ -1,0 +1,17 @@
+mknod plik p - tworzy potok nazwany FIFO 
+
+Komenda cat plik -> otwierlem plik w trybie czytania
+Komenda cat > plik -> otwierlem plik w trybie do wpisywania danych
+
+W dwoch terminalach otwtorzylem potok nazwany FIFO w trybie do czytania a w 2 w trybie do pisania. Dane byly rozdzielane przez system w sposob losowy. 
+Nie mozna bylo okreslic do ktrorego procesu (w ktorym terminalu) pojawia sie wpisywane dane.
+
+Zamkniecie 2 procesow odczytujacych dane powodowalo zawieszenie sie procesow zapisujacych dane. Nie byly one jednak automatycznie zamykane.
+Dopiero po wpisaniu danych lub kliknieciu enter mozna bylo zamknac po kolei procesy zapisujace.
+
+Zamkniecie 2 procesow wpisujacych dane do potoku powodowalo natychmiastowe zamkniecie procesow odczytujacych dane.
+
+Zamkniecie jednego z procesow zapisujacych dane i jednego odczytujacego nie powoduje problemow - zapisujac dane na wolnym terminalu sa one bezposrednio 
+przekazywane do terminala odczytujacego.
+
+Gdy nie otworzy sie pliku zapisujacego dane a otworzy plik odczytujacy bedzie on ciagle czekal na dane i nie zostanie zamkniety
