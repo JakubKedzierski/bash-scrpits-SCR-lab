@@ -1,0 +1,9 @@
+Stworzylem skrypt, ktory co 1 sekunde wypisuje aktualna godzine w formacie:
+hh:min:ss
+
+Wysylannie sygnalu SIGSTOP zatrzymuje prace skryptu a SIGCONT wznawia. Uzycie ctr+z dziala tak zamo jak wyslanie sygnalu SIGSTOP.
+
+fg dziala w sposob podobny do wyslania sygnalu SIGCONT, wznawia proces "na pierwszym planie"
+
+bg powoduje wznowienie procesu w tle -> niemozliwe jest jego pozniejsze wstrzymanie z klawiatury, ale mozliwe jest normalne
+wysylanie sygnalow przez komende kill
