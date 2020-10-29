@@ -1,15 +1,10 @@
 Sposob dzialania:
-Tworze 2 terminale, w jednym odpalam komenda:
-    
-    ./zadanie7.sh & ./zadanie7dwa.sh
+Tworze 2 terminale, w ktorych odpalam zasobozerne skrypty. 
+Sprawdzajac poprzez htop zuzyie zasobow jest takie same.
 
-jednoczesnie 2 skrypty, ktore spia przez 5 sekund, a nastepnie wypisuja swoja nazwe.
-W drugim terminalu wpisuje polecenia np:
-
-renice -n 10 -p `pgrep zadanie7.sh`
+W trzecim terminalu zmieniam liczbe nice jednego z odpalonych skryptow
 renice -n 18 -p `pgrep zadanie7dwa.sh`
 
-W powyzszym przypadku zadanie7dwa ma wieksza liczbe nice/mniejszy priotytet i wykonuje sie szybciej -
-pierwszy wyswietla sie napis "zadanie7". 
+W powyzszym przypadku zadanie7dwa ma wieksza liczbe nice/mniejszy priotytet i wykonuje sie wolniej -
+Ma mniejsza liczbe zuzycia procesora %CPU.
 
-Powyzszy sposob nie zawsze sie sprawdzal (np przy korzystaniu z $0 do wyswietlania)
