@@ -22,3 +22,49 @@ top -d 0.5 - daje odswiezanie co 0.5
     Gdy po ustawieniu sigprockmask sygnal przyjdzie, jest on ingnorowany, ale pozostaje w kolejce oczekujacych.
     Gdy uwolnie sygnal poprzez sigprocmask unblock -> sygnal ten jest wywyolywany
 
+3.
+pseudosystem plikow z informacjami o procesach
+
+katalogi zawierające tylko cyfry w nazwach - każdy odpowiada jakiemuś procesowi aktualnie działającemu w systemie (nazwa katalogu to pid procesu). W tych katalogach mamy między innymi:
+
+    cmdline - zawiera pełną linię komend procesu
+    cwd - (skrót od current working directory), jest to link do aktualnego katalogu roboczego procesu
+    environ - zawiera zmienne środowiskowe procesu
+    exe - link do pliku zawierającego uruchomiony program
+    fd - katalog zawierający linki do otwartych przez proces plików, ich nazwy to numerki deskryptorów (należy pamiętać, że deskryptorom nie zawsze przypisany jest plik, może być no pipe)
+    maps - zawiera zmapowane obecnie regiony pamięci oraz prawa dostępu do nich
+    stat - status procesu (wykorzystywane przez program ps) 
+
+    pfiles Report fstat and fcntl information for all open files in each process.  -permission denied
+Usage:
+/usr/proc/bin/pfiles [ -F ] pid ...
+
+ psig	       List the signal actions and handlers of each process. -permission denied
+
+4.
+
+Under Linux, you can find the PID of your process, then look at /proc/$PID/status.
+It contains lines describing which signals are blocked (SigBlk), ignored (SigIgn), or caught (SigCgt).
+
+SigCgt:	0000000000006a00
+              110101000000000 <- od prawej strony
+              czyli wychodzi 10,12,14,15
+
+ShdPnd:	0000000000000800 <- signal pending - oczekujacy
+SigBlk:	0000000000000800 <- signal blocked 
+
+Po otwarciu first.out SigCgt takie jak w programie, po wyslaniu kill SIUSR2 - pojawia sie on w SigBlck
+po wyslaniu kolejnego SIGUSR2 w czasie gdy jest on juz blokowany, pojawia sie signal w SigPnd
+
+po kompilacji 4.
+./a.out | cat | cat > /dev/null &
+
+lsof, ale lepiej sprawdzic przez proc
+ls -l /proc/[pid]/fd
+
+Po wylistowaniu widac ze wyjsciem jednego (1) jest wejsciem drugiego cata + na wyjsciu cat koncowego jest przekierowanie 2> /dev/null
+
+Entries in /dev/pts are pseudo-terminals (pty for short). Unix kernels have a generic notion of terminals.
+A terminal provides a way for applications to display output and to receive 
+input through a terminal device. A process may have a controlling terminal — for a text mode application, this is how it interacts with the user.
+
