@@ -1,0 +1,24 @@
+1.
+przy kompilacji -lrt (ale bez tez dziala)
+top -d 0.5 - daje odswiezanie co 0.5
+
+2
+       If SA_SIGINFO is specified in sa_flags, then sa_sigaction (instead of
+       sa_handler) specifies the signal-handling function for signum.  This
+       function receives three arguments, as described below.
+
+       sa_mask specifies a mask of signals which should be blocked (i.e.,
+       added to the signal mask of the thread in which the signal handler is
+       invoked) during execution of the signal handler.  In addition, the
+       signal which triggered the handler will be blocked, unless the
+       SA_NODEFER flag is used.
+
+	int sigaction(int signum, const struct sigaction *act,struct sigaction *oldact);
+	int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
+
+	signum specifies the signal and can be any valid signal except
+    SIGKILL and SIGSTOP.
+
+    Gdy po ustawieniu sigprockmask sygnal przyjdzie, jest on ingnorowany, ale pozostaje w kolejce oczekujacych.
+    Gdy uwolnie sygnal poprzez sigprocmask unblock -> sygnal ten jest wywyolywany
+
