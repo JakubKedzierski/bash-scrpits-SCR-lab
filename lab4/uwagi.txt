@@ -69,16 +69,38 @@ A terminal provides a way for applications to display output and to receive
 input through a terminal device. A process may have a controlling terminal — for a text mode application, this is how it interacts with the user.
 
 5.
-strace [app] - sledzi wywolania systemowe oraz wywolania sygnalow. Moze sluzyc jako narzedzie diagnostyczne oraz do przesledzenia np wyscigow.
+strace [app] - sledzi wywolania systemowe oraz wywolania sygnalow. Moze sluzyc jako narzedzie diagnostyczne oraz do przesledzenia czy w programie
+wystepuja wyscigi.
 Kazda linijka zawiera:
 nazwe wywolania systemowego (argumenty) = zwracana wartosc 
-Sygnaly sa dekodowane do struktury siginfo  
+Sygnaly sa dekodowane do struktury siginfo. 
 
-Jesli wywolanie wstrzymane -> unfinished, pozniej nowe wywolanie i => resumed 
-Structure pointers are dereferenced and the members are displayed as appropriate.
+Jesli wywolanie systemowe zostaje wstrzymane podczas dzialania programu pojawia sie znacznik-> unfinished, pozniej przy przywracaniu
+wywolania => resumed.
+Wskazniki na struktury sa wyluskiwane wraz z kazdym polem struktury (pokazywane sa wszystkie wartosci) 
 
+Pomocne wywolania:
 strace -e trace=[nazwa polecenia systemowego] [polecenie] - wyszukanie tylko jednego polecenia systemowego
-strace -p - strace dla konkretnego pidu
+strace -p - strace dla konkretnego pid
 strace -t - dodaje moment wywolania/ lepiej -r daje lepszy podglad
 strace -T - dodaje czas trwania wywolania
-strace -c - daje ilosc czasu na dane wywolanie systemowe
+strace -c - dodaje ilosc czasu na dane wywolanie systemowe
+
+6.
+Pierwsza linijka zawiera:
+int execve(const char *filename, char *const argv[],char *const envp[]);
+
+execve()  wykonuje  program wskazywany przez filename - po skopiowaniu przez fork procesu, tutaj uruchamiany jest wlasciwy nowy program
+(zastepowanie programu rodzica wlasciwym programem)
+envp to środowisko dla nowego programu
+
+brk(NULL) = 0x1b61000 -> podaje informacje gdzie konczy sie stos pamieci
+ld.so - dynamiczny konsolidator, ladowacz bibliotek
+fstat - przedstawia status procesu 
+mmap - mapowanie miejsca w pamieci
+close - zamyka deskryptor
+mprotect - ustawia ochrone wybranych obszarow pamieci
+arch_prctl - ustawia odpowiednia architekture (np 64 bit) 
+ssize_t write(int fd, const void *buf, size_t count) - wypisuje do wskazanego deskryptora wartosc buf
+count - to liczba bajtow do zapisania 
+ioctl - zmiana parametrow plikow specialnych - uzywany np do przekierowania
