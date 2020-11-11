@@ -68,3 +68,17 @@ Entries in /dev/pts are pseudo-terminals (pty for short). Unix kernels have a ge
 A terminal provides a way for applications to display output and to receive 
 input through a terminal device. A process may have a controlling terminal — for a text mode application, this is how it interacts with the user.
 
+5.
+strace [app] - sledzi wywolania systemowe oraz wywolania sygnalow. Moze sluzyc jako narzedzie diagnostyczne oraz do przesledzenia np wyscigow.
+Kazda linijka zawiera:
+nazwe wywolania systemowego (argumenty) = zwracana wartosc 
+Sygnaly sa dekodowane do struktury siginfo  
+
+Jesli wywolanie wstrzymane -> unfinished, pozniej nowe wywolanie i => resumed 
+Structure pointers are dereferenced and the members are displayed as appropriate.
+
+strace -e trace=[nazwa polecenia systemowego] [polecenie] - wyszukanie tylko jednego polecenia systemowego
+strace -p - strace dla konkretnego pidu
+strace -t - dodaje moment wywolania/ lepiej -r daje lepszy podglad
+strace -T - dodaje czas trwania wywolania
+strace -c - daje ilosc czasu na dane wywolanie systemowe
