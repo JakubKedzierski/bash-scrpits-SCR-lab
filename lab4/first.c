@@ -60,7 +60,6 @@ int main()
 		nanosleep(&ts, (struct timespec *)NULL);
 		if(flag){
 			if(!loopCounter) sigprocmask(SIG_BLOCK,&sigset,NULL);	// blokuje sygnal
-			
 			loopCounter++;
 			if(loopCounter>20){
 				printf("Jestem juz widoczny ! \n");
