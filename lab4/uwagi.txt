@@ -39,7 +39,7 @@ katalogi zawierające tylko cyfry w nazwach - każdy odpowiada jakiemuś proceso
 Usage:
 /usr/proc/bin/pfiles [ -F ] pid ...
 
- psig	       List the signal actions and handlers of each process. -permission denied
+ psig	       List the signals actions and handlers of each process. -permission denied
 
 4.
 
