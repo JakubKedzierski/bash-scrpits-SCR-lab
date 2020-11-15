@@ -1,0 +1,103 @@
+5.
+strace [app] - polecenie do sledzenia wywolan systemowych oraz wywolania sygnalow. Moze sluzyc jako narzedzie diagnostyczne np.
+do przesledzenia czy w programie wystepuja wyscigi.
+
+Wyjscie polecenia ma postac:
+nazwa wywolania systemowego (argumenty) = zwracana wartosc 
+Sygnaly sa dekodowane do struktury siginfo. 
+
+Jesli wywolanie systemowe zostaje wstrzymane podczas dzialania programu pojawia sie znacznik- > unfinished, pozniej przy przywracaniu
+wywolania znacznik ->resumed.
+Wskazniki na struktury sa wyluskiwane wraz z kazdym polem struktury (pokazywane sa wszystkie wartosci). 
+
+Pomocne wywolania:
+strace -e trace=[nazwa polecenia systemowego] [program] - wyszukanie konkretnego polecenia systemowego, mozliwosc wyszukiwania kilku polecen jednoczesnie
+strace -e signal=[nazwa sygnalu] [program] - wyszukuje okreslony zestaw sygnalow
+strace -p - strace dla konkretnego pid
+strace -t - dodaje moment wywolania / mozna tez -r co daje lepszy podglad
+strace -T - dodaje czas trwania wywolania
+strace -c - dodaje ilosc czasu na dane wywolanie systemowe
+
+6.
+a) Analiza wyjscia programu helloword:
+
+Pierwsza linijka zawiera:
+int execve(const char *filename, char *const argv[],char *const envp[]);
+
+execve()  wykonuje  program wskazywany przez filename - po skopiowaniu przez fork procesu, tutaj uruchamiany jest wlasciwy nowy program
+(zastepowanie programu rodzica wlasciwym programem)
+envp to środowisko dla nowego programu
+
+brk(NULL) = 0x1b61000 -> podaje informacje gdzie konczy sie stos pamieci
+
+W kolejnych linijkach otwierane sa okreslone deskryptory i mapowane sa potrzebne dla programu obszary pamieci
+mmap - mapowanie miejsca w pamieci
+ld.so - dynamiczny konsolidator, ladowacz bibliotek
+fstat - przedstawia status procesu 
+close - zamyka deskryptor
+mprotect - ustawia ochrone wybranych obszarow pamieci
+arch_prctl - ustawia odpowiednia architekture (np 64 bit) 
+
+Po zmapowaniu odpowiednich obszarow pomieciu i przygotowaniu programu znajdujemy najciekawsza linijke w ktorej uzyte jest polecenie:
+ssize_t write(int fd, const void *buf, size_t count) - wypisuje do wskazanego deskryptora wartosc buf
+count - to liczba bajtow/znakow do zapisania 
+Zwracana wartoscia przez funcke write jest liczba bajtow/znakow zapisanych do okreslonego deskryptora. 
+W moim przypadku wyglada to tak:
+write(1, "hello world\n", 12)           = 12
+Operacja powiodla sie - do zapisania bylo 12 bajtow/znakow  i 12 bajtow/znakow  zostalo zapisanych
+
+b)
+Do znalezienia plikow konfiguracyjnych uzylem:
+
+strace -o ./6b.txt -e trace=access,openat,faccessat bash
+
+faccessat ma dzialanie takie samo jak access. Wyjscie skierowalem do pliku 6b tak aby miec mozliwosc latwego i szybkiego
+przetworzenia danych i znalezenia odpowiednich plikow.
+Plki konfiguracyjne wyszukalem z pliku tekstowego za pomoca polaczenia cat i grep:
+cat 6b.txt | grep -E 'bash|locale'
+
+Znalezione pliki konfiguracyjne:
+openat(AT_FDCWD, "/etc/bash.bashrc", O_RDONLY) = 3
+openat(AT_FDCWD, "/home/kuba/.bashrc", O_RDONLY) = 3
+openat(AT_FDCWD, "/home/kuba/.bash_history", O_RDONLY) = 3
+openat(AT_FDCWD, "/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3
+
+c)
+W osobnym terminalu otworzylem programem nano plik tekstowy.
+Nastepnie korzystajac z strace -p `pgrep nano` -e trace=open,openat,close otrzymalem 
+(po wpisaniu kilku wartosci do bufora nano):
+
+openat(AT_FDCWD, "/etc/passwd", O_RDONLY|O_CLOEXEC) = 3
+close(3)
+                                = 0
+openat(AT_FDCWD, "./.dokument.txt.swp", O_WRONLY|O_CREAT|O_EXCL|O_APPEND, 0666) = 3
+close(3)     
+
+openat(AT_FDCWD, "dokument.txt", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 3
+close(3)   
+
+Na podstawie otrzymanego wyniku mozna wnioskowac ze plik edytowany przez nano nie jest stale otwarty, i otwierany jest dopiero 
+na koniec przy probie zapisu. Na poczatku otwierany jest inny plik tymczasowy z rozszerzeniem .swp, ale on rowniez zaraz po otwarciu jest zamykany.
+
+d)
+Wykorzystalem polecenie:
+strace -e trace=open,openat,close ./a.out > /dev/null
+
+Otrzymany wynik:
+
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+close(3)                                = 0
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+close(3)   
+
+Program wypisujacy hello world posiada 3 podstawowe deskryptory: 0,1,2 - wejscie, wyjscie, strumien bledow, a podczas pracy uruchamia 3 deskryptor
+do odczytania plikow: ld.so.cache, libc.so.6
+
+7.
+Program zostal zabity przez sygnal: SIGSEGV - czyli naruszenie ochrony pamieci.
+Powodem jest przekroczenie zakresu tablicy i wtedy tez otrzymujemy sygnal.
+
+write(1, "Witajcie moi mili ...\0\0\0\1\33\3;@\0\0\0"..., 4096) = 4096
+--- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0x55cc95ed5000} ---
+
+Poprzez uzycie flagi -T lub -r mozemy zobaczyc ktore fragmenty kodu wykonuja sie najdluzej i sa problematyczne.

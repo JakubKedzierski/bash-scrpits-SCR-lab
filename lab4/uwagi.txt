@@ -103,4 +103,5 @@ mprotect - ustawia ochrone wybranych obszarow pamieci
 arch_prctl - ustawia odpowiednia architekture (np 64 bit) 
 ssize_t write(int fd, const void *buf, size_t count) - wypisuje do wskazanego deskryptora wartosc buf
 count - to liczba bajtow do zapisania 
-ioctl - zmiana parametrow plikow specialnych - uzywany np do przekierowania
+ioctl - zmiana parametrow plikow specialnych - uzywany np do przekierowaniasie stos pamieci
+ld.so - dynamiczny konsolidator, ladowacz bibliotek
