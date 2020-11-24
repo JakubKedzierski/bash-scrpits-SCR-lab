@@ -29,7 +29,7 @@ int main(int argc,char *argv[]){
         
         while((countWords=read(pipefd[0],buf,packageSize))>0){
             
-            if((countWords=write(stdout,buf,countWords))<0){
+            if((countWords=write(1,buf,countWords))<0){
                 fprintf(stderr,"Blad przy przekazywaniu do potoku");
             }
         }
