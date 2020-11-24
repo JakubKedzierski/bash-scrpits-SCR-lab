@@ -2,7 +2,6 @@
 #include <unistd.h> 
 #include <string.h>
 #include <fcntl.h> 
-#include <stdlib.h> 
 #define packageSize 10
 
 int main(int argc,char *argv[]){
