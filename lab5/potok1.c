@@ -1,12 +1,17 @@
 #include <stdio.h> 
 #include <unistd.h> 
 #include <fcntl.h> 
+#define packageSize 10
 
-int main(){
-    const char uiQuestion[]="\nPodaj nazwe pliku z obrazkiem: \n";
-    char file_name[30];
-    char buf[200];
-    int count,pipefd[2],filefd,flag;
+int main(int argc,char *argv[]){
+
+    if(argc<2){
+        fprintf(stderr,"Zle wywolanie. Wywolanie programu w postaci %s [nazwa pliku tekst] \n \n",argv[0]);
+        return -1;
+    }
+
+    int pipefd[2],filefd,countWords;
+    char buf[packageSize];
 
     if (pipe(pipefd) == -1) {
         fprintf(stderr,"Nie uruchomiono potoku \n");
@@ -14,40 +19,34 @@ int main(){
     }
 
     pid_t pid = fork();
-    if (pid < 0) {
+
+    if(pid <0){
         fprintf(stderr,"Blad przy tworzeniu nowego procesu \n");
         return -1;
-    }
-    
-    if(pid==0){
+
+    }else if(pid==0){  // dziecko
         close(pipefd[1]); // aby dziecko nie bylo piszace
         
-        close(0);
-        dup(pipefd[0]); 
-
-        execlp("display", "display", "-", NULL);        
-        
-        close(pipefd[0]);
-
-    }else{
-        close(pipefd[0]); // aby rodzic nie byl czytajacy
-
-        write(1,uiQuestion,sizeof(uiQuestion));
-        scanf("%s", file_name);
-
-        if((filefd=open(file_name,O_RDONLY)) < 0){
-            fprintf(stderr,"Blad przy probie odczytu zdjecia\n");
-            return -1;
-        }
-
-        while((flag=read(filefd,&buf,200))>0){
-            if(write(pipefd[1],&buf,flag)<0){
-                fprintf(stderr,"Blad przy pisaniu do potoku\n");  
+        while((countWords=read(pipefd[0],buf,packageSize))>0){
+            
+            if((countWords=write(stdout,buf,countWords))<0){
+                fprintf(stderr,"Blad przy przekazywaniu do potoku");
             }
         }
-        close(filefd);
-        close(pipefd[1]);
+
+    }else{ // rodzic
+        close(pipefd[0]); // aby rodzic nie byl czytajacy
+        if((filefd=open(argv[1],O_RDONLY)) < 0){
+            fprintf(stderr,"Blad przy odczycie pliku \n");
+            return -1;
+        } 
+        while((countWords=read(filefd,buf,packageSize))>0){
+
+            if((countWords=write(pipefd[1],buf,countWords))<0){
+                fprintf(stderr,"Blad przy przekazywaniu do potoku");
+            }
+
+        }
+
     }
-
 }
-
