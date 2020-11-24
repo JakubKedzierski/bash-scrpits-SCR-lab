@@ -1,6 +1,8 @@
 #include <stdio.h> 
 #include <unistd.h> 
+#include <string.h>
 #include <fcntl.h> 
+#include <stdlib.h> 
 #define packageSize 10
 
 int main(int argc,char *argv[]){
@@ -29,10 +31,14 @@ int main(int argc,char *argv[]){
         
         while((countWords=read(pipefd[0],buf,packageSize))>0){
             
-            if((countWords=write(1,buf,countWords))<0){
-                fprintf(stderr,"Blad przy przekazywaniu do potoku");
-            }
+            write(1," #",2*sizeof(char))<0?fprintf(stderr,"Blad przy przekazywaniu do potoku"):0;
+            
+            write(1,buf,countWords)<0?fprintf(stderr,"Blad przy przekazywaniu do potoku"):0;
+            
+            write(1,"# ",2*sizeof(char))<0?fprintf(stderr,"Blad przy przekazywaniu do potoku"):0;
         }
+
+        close(pipefd[0]);
 
     }else{ // rodzic
         close(pipefd[0]); // aby rodzic nie byl czytajacy
@@ -42,11 +48,12 @@ int main(int argc,char *argv[]){
         } 
         while((countWords=read(filefd,buf,packageSize))>0){
 
-            if((countWords=write(pipefd[1],buf,countWords))<0){
+            if(write(pipefd[1],buf,countWords)<0){
                 fprintf(stderr,"Blad przy przekazywaniu do potoku");
             }
 
         }
+        close(pipefd[1]);
 
     }
 }
