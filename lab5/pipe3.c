@@ -7,6 +7,9 @@
 #define fifoPipe "potok1"
 #define packageSize 10
 
+/* Komenda odczytujaca tail -c +0 -f potok1 */
+/* wczesniej utworzono w katalogu potok nazwany poprzez mknod potok1 p */
+
 int main(int argc,char *argv[]){
     
     if(argc<2){
@@ -19,7 +22,7 @@ int main(int argc,char *argv[]){
 
     int texts=argc;
 
-    mode_t prevMask = umask(0);
+    mode_t mask = umask(0);
 
     if((pipeFd=open(fifoPipe,O_WRONLY)) == -1){
         fprintf(stderr,"Blad przy otwieraniu potoku \n");
@@ -44,6 +47,7 @@ int main(int argc,char *argv[]){
 
         fprintf(stdout,"Czekam na kolejny plik");
         sleep(2);
+
         //feof(filefd); 
     }
     close(pipeFd);
