@@ -22,7 +22,7 @@ int main(int argc,char *argv[]){
 
     int texts=argc;
 
-    mode_t mask = umask(0);
+    mode_t mask = umask(0); // maska do sumy binarnej przy otwieraniu w open (O_WRONLY & ~0000)
 
     if((pipeFd=open(fifoPipe,O_WRONLY)) == -1){
         fprintf(stderr,"Blad przy otwieraniu potoku \n");
