@@ -20,9 +20,8 @@ int main(){
         fprintf(stderr,"Blad przy otwieraniu pliku do mapowania pamieci \n");
         return -1;
     }
-    count=lseek(mapFileFd,0,SEEK_END);
 
-    addr=mmap(NULL,count, PROT_WRITE , MAP_SHARED, mapFileFd, 0);
+    addr=mmap(NULL,1, PROT_WRITE , MAP_SHARED, mapFileFd, 0);
 
     if (addr == MAP_FAILED){
         fprintf(stderr,"Blad przy mapowaniu 1.  \n");
@@ -30,6 +29,8 @@ int main(){
     }
 
     while(1){
+        count=lseek(mapFileFd,0,SEEK_END);
+
         printf("Podaj nazwe pliku do odczytu \n");
         scanf("%s",file_name);
 
@@ -43,10 +44,9 @@ int main(){
             return -1;
         }  
         
-        addr=mmap(NULL,fileStats.st_size, PROT_WRITE | PROT_READ , MAP_SHARED, mapFileFd, 0);
+        addr=mmap(NULL,fileStats.st_size+count, PROT_WRITE | PROT_READ , MAP_SHARED, mapFileFd, 0);
 
-
-        ftruncate(mapFileFd,fileStats.st_size);
+        ftruncate(mapFileFd,fileStats.st_size+count);
         
         if (addr == MAP_FAILED){
             fprintf(stderr,"Blad przy mapowaniu 2.  \n");
@@ -54,7 +54,7 @@ int main(){
         }
 
         while((count=read(filefd,buff,1))>0){
-            addr[i++]=buff;
+            addr[i++]=buff[0];
         }
     }
 
