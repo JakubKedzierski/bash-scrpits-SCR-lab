@@ -15,7 +15,7 @@ void handleCriticalError(const char* errorMessage){
 
 int main(){
     int mapFileFd,filefd;
-    char *addr,*fileMem,buff[1];
+    char *addr,buff[1];
     struct stat fileStats;
     int count,letters;
     char file_name[100];
