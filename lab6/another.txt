@@ -1,0 +1,5 @@
+inny plik do zczytywania danych
+
+
+
+Koniec danych
