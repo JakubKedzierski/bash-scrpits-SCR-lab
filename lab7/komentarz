@@ -1,0 +1,30 @@
+int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+                          void *(*start_routine) (void *), void *arg);
+
+Compile and link with -pthread.
+   The pthread_create() function starts a new thread in the calling
+       process.  The new thread starts execution by invoking
+       start_routine(); arg is passed as the sole argument of
+       start_routine().
+
+thread - buffer id
+
+If attr is NULL,
+       then the thread is created with default attributes.
+
+On success, pthread_create() returns 0; on error, it returns an
+       error number, and the contents of *thread are undefined.
+
+
+Kolejnosc jest zamieniona
+
+       The pthread_join() function waits for the thread specified by
+       thread to terminate.  If that thread has already terminated, then
+       pthread_join() returns immediately.  The thread specified by
+       thread must be joinable.
+
+join czeka az sie zakonczy watek i wtedy dopiero pozwala na dalsze wykonywanie maina - dzieki
+temu mozemy zrobic zeby byly po kolei ID, program dolaczony nie stosowal funkcji join co powodowalo 
+ze watki konczyly sie losowo.
+
+Kompilacja: gcc myHello.c -pthread
