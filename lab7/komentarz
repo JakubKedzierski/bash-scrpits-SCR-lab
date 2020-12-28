@@ -1,3 +1,4 @@
+1.
 int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
                           void *(*start_routine) (void *), void *arg);
 
@@ -28,3 +29,92 @@ temu mozemy zrobic zeby byly po kolei ID, program dolaczony nie stosowal funkcji
 ze watki konczyly sie losowo.
 
 Kompilacja: gcc myHello.c -pthread
+
+2.
+Kompilacja:  gcc hello32.c -pthread -lm
+
+Planista wrzuca na tapete watek ktory mu sie podoba
+Kolejność zwykle jest różna ze wzgledu na to że wątki wykonuą sie w roznym czasie 
+i nie czekaja na siebie, watek 3 nie czeka az skonczy sie watek 2 tylko jesli jest mozliowsc to
+od razu jest umieszczany na procesorze do wykonania 
+
+3.
+jeden argument to mozna przekazac jako ostatni argument przy wywolaniiu pthread_create
+
+jako to ze pthread_create ma ostatni argument jako void * to mozna przeslac tez strukture i pozniej sobie
+ja zrzutowac (struct nazwa_struktury *), odczytac wartosci
+
+Dzialanie - przekazywanie arugmentow dziala normalnie i wykonywane sa watki losowo
+
+W bug3 przekazywany jest adres zmiennej t przy tworzeniu watku, printf
+odwoluje sie do tej zmiennej, ktora jest zmieniana w petli. Funkcja wypisujaca uruchamia sie juz po utworzeniu watkow
+i posiada adres do zmiennej (nie wartosc) ktora zostala zmodyfikowana juz w petli.
+
+Trzeba po prostu nie przekazywac zmiennej odpowiadajacej za ID przez adres a wystarczy przekazac przez wartosc
+Mozna tez dac sleep w forze tak aby byl czas na wykonanie na procesorze funkcji przekazanej dla danego watku
+
+Mozna dac tez pthread_join ktory bedzie czekal az wykona sie dany watek aby przejsc dalej, dzieki czemu nie 
+zostanie w forze zmodyfikowana w miedzyczasie zmienna t i tym samym odpowiednia wartosc zostanie wyswietlona
+
+4.
+
+Główny wątek nie czeka na wykonanie kolejnych utworoznych wątków tylko w pewnym momencie se umiera i wraz z nim wszystkie utworzone 
+wątki, można to naprawić "rozkazując" głównemu wątkowi aby poczekał aż skończą się wszystkie pozostałe np poprzez pthread_join - to chyba
+najlepsze rozwiazanie lub mozna dodac sleep w forze w mainie, co pozwoli poczekac na wykonanie sie watku ktory zostal utworoznych
+
+mozna tez dac pthread_exit(NULL); - co wymusi czekanie mimo zakonczenia watku glownego na zakonczenie sie pozostalych watkow
+
+5.
+
+int pthread_attr_setdetachstate(pthread_attr_t *attr, int detachstate);
+ The pthread_attr_setdetachstate() function sets the detach state
+       attribute of the thread attributes object referred to by attr to
+       the value specified in detachstate.
+
+
+PTHREAD_CREATE_DETACHED
+              Threads that are created using attr will be created in a
+              detached state.
+
+PTHREAD_CREATE_JOINABLE
+              Threads that are created using attr will be created in a
+              joinable state.
+
+       The default setting of the detach state attribute in a newly
+       initialized thread attributes object is PTHREAD_CREATE_JOINABLE
+
+The pthread_attr_init() function initializes the thread
+       attributes object pointed to by attr with default attribute
+       values.  After this call, individual attributes of the object can
+       be set using various related functions
+
+When a thread attributes object is no longer required, it should
+       be destroyed using the pthread_attr_destroy() function.
+
+
+int pthread_join(pthread_t thread, void **retval);
+
+If retval is not NULL, then pthread_join() copies the exit status
+       of the target thread (i.e., the value that the target thread
+       supplied to pthread_exit(3)) into the location pointed to by
+       retval.  If the target thread was canceled, then PTHREAD_CANCELED
+       is placed in the location pointed to by retval.
+
+do zmiennej status trafia retvall, czyli to samo co sie przekazuje do pthread_exit a znow
+tam sie przekazuje to co zwraca funkcja zadana do danego wątku
+
+mozna dodac rand do pthread_exit (t+rand()) i losowanie nowego zarodka w mainie, dzieki czemu zwracany status jest rozny 
+
+w detached ze wzgledu na to ze nie sa dolaczane poprzez pthread_join wykonuja sie watki losowo, nie czeka jeden na drugiego az sie zakonczy
+co powoduje ze otrzymujemy napisy w roznej kolejnosci
+
+6.
+za duży jest array size - przekraczamy zakres stosu, wystarczy zmniejszyc tablice
+np dwa zera mniej lub juz przy 1 000 000 działa
+
+double zajmuje 8 bajtow
+8 x 2 000 000 = 16 000 000 > rozmiar stosu: 8 388 608
+
+mozna zmienic typ (np. na float ktory zajmuje 4 bajty a nie 8), zmniejszyc tablice itp., zwiększyć rozmiar stosu
+
+w dostarczonym programie jest: pthread_attr_setstacksize, mozna zwiekszyc rozmiar stosu dla watkow i bedzie dobrze
