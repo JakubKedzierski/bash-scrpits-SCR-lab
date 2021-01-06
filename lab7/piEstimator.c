@@ -27,6 +27,7 @@ void *printGreetingMess(void* value){
 
     float pi=4*(circleCount/squareCount);
     *average+=pi;
+    //printf("%f \n", pi);
     pthread_exit(NULL);
 }
 
