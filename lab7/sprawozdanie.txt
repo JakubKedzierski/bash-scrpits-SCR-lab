@@ -1,0 +1,30 @@
+5.
+
+pthread_join powoduje że dane wątki czekają na zakończenie sie poprzednich 
+i dopiero wtedy sie wykonuja
+
+int pthread_join(pthread_t thread, void **retval);
+retval - to wartosc ktora zwraca pthread_exit po zakonczeniu watku
+
+Aby otrzymac rozne wartosci (zeby watki zwracaly rozne wartosci) mozna dodac 
+losowanie randomowych liczb - (void*) (t + rand()%100) do pthread_exit w funkcji 
+ktora dany watek wykonuje
+
+Dzieki uzyciu join komentarze: Main: completed join with thread 3 having a status of xx
+beda pojawiac sie zgodnie z numerami utworzonych wątków
+
+w detached.c watki sa w stanie "nie do dolaczenia" przez co nie ma mozliwosci aby jeden czekal
+na zakonczenie drugiego, dodatkowo tracimy mozliwosc otrzymania informacji o tym co watek zwraca
+i przekazaniu tej informacji do kolejnego watku.
+
+6. 
+blad wynika z przekroczenia rozmiaru stosu
+(double zajmuje 8 bajtow
+8 x 2 000 000 = 16 000 000 > rozmiar stosu: 8 388 608
+)
+
+Mozna to rozwiazac poprzez 
+- zmniejszenie tablic jakie sa tworzone w watkach tak aby miescic sie w rozmiarze stosu np mozna 
+dac typ float ktory zabiera mniej miejsca lub zmniejszyc rozmiar tablicy
+- zwiekszenie rozmiaru stosu poprzez zmiane atrybutów watku -> pthread_attr_setstacksize  (tak tez zrobili w buf2fix.c )
+i nastepnie przekazniu tego atrybutu przy tworzeniu watku (pthread_create)
