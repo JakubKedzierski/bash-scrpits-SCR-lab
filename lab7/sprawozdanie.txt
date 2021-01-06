@@ -28,3 +28,5 @@ Mozna to rozwiazac poprzez
 dac typ float ktory zabiera mniej miejsca lub zmniejszyc rozmiar tablicy
 - zwiekszenie rozmiaru stosu poprzez zmiane atrybutów watku -> pthread_attr_setstacksize  (tak tez zrobili w buf2fix.c )
 i nastepnie przekazniu tego atrybutu przy tworzeniu watku (pthread_create)
+
+

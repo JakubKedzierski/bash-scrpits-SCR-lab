@@ -30,6 +30,11 @@ ze watki konczyly sie losowo.
 
 Kompilacja: gcc myHello.c -pthread
 
+       The pthread_exit() function terminates the calling thread and
+       returns a value via retval that (if the thread is joinable) is
+       available to another thread in the same process that calls
+       pthread_join(3).
+
 2.
 Kompilacja:  gcc hello32.c -pthread -lm
 
